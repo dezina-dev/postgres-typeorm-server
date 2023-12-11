@@ -16,5 +16,5 @@ export class Customer extends BaseEntity {
   Customer_Contact!: number;
 
   @OneToOne((type) => User, (user: any) => user.Customer_ID)
-  user!: User;
+  User!: User;
 }

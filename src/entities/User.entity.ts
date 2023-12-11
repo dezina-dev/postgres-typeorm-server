@@ -48,7 +48,7 @@ export class User extends BaseEntity {
   @Column()
   Profile_Image!: string;
 
-  @OneToOne(() => Customer, (customer) => customer.user, { eager: true })
+  @OneToOne(() => Customer, (customer) => customer.User, { eager: true })
   @JoinColumn()
   Customer_ID!: Customer;
 
@@ -56,11 +56,11 @@ export class User extends BaseEntity {
   @JoinColumn()
   Admin_ID!: AdminGroup
 
-  @OneToMany(() => Order, (order) => order.user, { eager: true })
+  @OneToMany(() => Order, (order) => order.User, { eager: true })
   Order_ID!: Order[];
 
-  @ManyToMany(() => Permission, (permission) => permission.users)
+  @ManyToMany(() => Permission, (permission) => permission.Users)
   @JoinTable()
-  permissions!: Permission[];
+  Permissions!: Permission[];
 
 }

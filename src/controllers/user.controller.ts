@@ -210,7 +210,7 @@ const createOrder = async (req: Request, res: Response) => {
     const order = Order.create({
       OrderName: OrderName,
       TotalCost: TotalCost,
-      user: user[0], // Set the user for the order
+      User: user[0], // Set the user for the order
     });
 
     const savedOrder = await order.save();
@@ -241,7 +241,6 @@ const createOrder = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 // Get user's orders
 const getUserOrders = async (req: Request, res: Response) => {
@@ -312,7 +311,7 @@ const assignPermissionsToUser = async (req: Request, res: Response) => {
       });
     }
 
-    user[0].permissions = permissions;
+    user[0].Permissions = permissions;
 
     const updatedUser = await user[0].save();
 

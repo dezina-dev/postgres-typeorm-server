@@ -13,5 +13,5 @@ export class Order extends BaseEntity {
   TotalCost!: number;
 
   @ManyToOne(() => User, (user:any) => user.Order_ID)
-  user!: User;
+  User!: User;
 }

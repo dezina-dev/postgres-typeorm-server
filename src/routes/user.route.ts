@@ -9,6 +9,6 @@ userRouter.get('/get-users', UserController.getUserList);
 userRouter.post('/create-order/:userId', UserController.createOrder);
 userRouter.get('/get-user-orders/:userId', UserController.getUserList);
 userRouter.post('/add-permission', UserController.addPermission);
-userRouter.post('/assign-permission/:userId', UserController.assignPermissionsToUser);
+userRouter.post('/assign-permissions/:userId', UserController.assignPermissionsToUser);
 
 export default userRouter;
