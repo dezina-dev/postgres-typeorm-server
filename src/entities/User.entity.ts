@@ -6,11 +6,14 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 import { Customer } from './Customer.entity';
 import { AdminGroup } from './AdminGroup.entity';
 import { Order } from './Order.entity';
+import { Permission } from './Permission.entity';
 
 @Entity('tb_users')
 export class User extends BaseEntity {
@@ -55,5 +58,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Order, (order) => order.user, { eager: true })
   Order_ID!: Order[];
+
+  @ManyToMany(() => Permission, (permission) => permission.users)
+  @JoinTable()
+  permissions!: Permission[];
 
 }

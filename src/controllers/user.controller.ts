@@ -4,11 +4,13 @@ import { User } from '../entities/User.entity';
 import { AdminGroup } from '../entities/AdminGroup.entity';
 import bcrypt from 'bcrypt';
 import { Order } from '../entities/Order.entity';
+import { Permission } from '../entities/Permission.entity';
 const jwt = require('jsonwebtoken');
 const express = require('express');
 
 const app = express();
 
+// Create user
 const registerUser = async (req: Request, res: Response) => {
   try {
     const checkExist = await User.findOneBy({ User_Email: req.body?.User_Email });
@@ -158,6 +160,7 @@ const registerUser = async (req: Request, res: Response) => {
   }
 };
 
+// Get all users based on User_Type = Customer/Admin
 const getUserList = async (req: Request, res: Response) => {
   try {
     const { User_Type } = req.body;
@@ -195,7 +198,7 @@ const createOrder = async (req: Request, res: Response) => {
   const { OrderName, TotalCost } = req.body;
 
   try {
- 
+
     const user = await User.find({ where: { id: userId } });
     if (!user) {
       return res.status(404).json({
@@ -246,7 +249,7 @@ const getUserOrders = async (req: Request, res: Response) => {
 
   try {
 
-const user = await User.find({ where: { id: userId } });
+    const user = await User.find({ where: { id: userId } });
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -267,11 +270,73 @@ const user = await User.find({ where: { id: userId } });
   }
 };
 
+const addPermission = async (req: Request, res: Response) => {
+  const { PermissionName } = req.body;
+
+  try {
+    const permission = Permission.create({ PermissionName });
+    const savedPermission = await permission.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Permission created successfully'
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+// Assign permissions to user
+const assignPermissionsToUser = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const { permissionIds } = req.body;
+
+  try {
+    const user = await User.find({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const permissions = await Permission.findByIds(permissionIds);
+    if (!permissions || permissions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Permissions not found',
+      });
+    }
+
+    user[0].permissions = permissions;
+
+    const updatedUser = await user[0].save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Permissions assigned successfully',
+      updatedUser: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
 const UserController = {
   registerUser,
   getUserList,
   createOrder,
-  getUserOrders
+  getUserOrders,
+  addPermission,
+  assignPermissionsToUser
 };
 
 export default UserController;
