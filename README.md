@@ -45,7 +45,7 @@ npm install
   user!: User;
 
 3. many-to-many relationship
-A user can have multiple permissions, and a permission can be associated with multiple users.
+- A user can have multiple permissions, and a permission can be associated with multiple users.
 - so in user entity
 -  @ManyToMany(() => Permission, (permission) => permission.users)
   @JoinTable()
