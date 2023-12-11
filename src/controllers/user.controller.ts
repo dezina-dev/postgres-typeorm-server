@@ -3,6 +3,7 @@ import { Customer } from '../entities/Customer.entity';
 import { User } from '../entities/User.entity';
 import { AdminGroup } from '../entities/AdminGroup.entity';
 import bcrypt from 'bcrypt';
+import { Order } from '../entities/Order.entity';
 const jwt = require('jsonwebtoken');
 const express = require('express');
 
@@ -188,9 +189,89 @@ const getUserList = async (req: Request, res: Response) => {
   }
 };
 
+// Create a new order for a user
+const createOrder = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const { OrderName, TotalCost } = req.body;
+
+  try {
+ 
+    const user = await User.find({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const order = Order.create({
+      OrderName: OrderName,
+      TotalCost: TotalCost,
+      user: user[0], // Set the user for the order
+    });
+
+    const savedOrder = await order.save();
+
+    // Update the User entity with the new order
+    user[0].Order_ID.push(order);
+
+    // Save the updated user
+    const updateUser = await user[0].save();
+
+    if (!updateUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Order created successfully',
+      data: savedOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+
+// Get user's orders
+const getUserOrders = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  try {
+
+const user = await User.find({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
 const UserController = {
   registerUser,
-  getUserList
+  getUserList,
+  createOrder,
+  getUserOrders
 };
 
 export default UserController;

@@ -5,10 +5,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Customer } from './Customer.entity';
 import { AdminGroup } from './AdminGroup.entity';
+import { Order } from './Order.entity';
 
 @Entity('tb_users')
 export class User extends BaseEntity {
@@ -47,7 +49,11 @@ export class User extends BaseEntity {
   @JoinColumn()
   Customer_ID!: Customer;
 
-  @OneToOne(()=> AdminGroup, (admin) => admin.user, {eager: true})
+  @OneToOne(() => AdminGroup, (admin) => admin.user, { eager: true })
   @JoinColumn()
   Admin_ID!: AdminGroup
+
+  @OneToMany(() => Order, (order) => order.user, { eager: true })
+  Order_ID!: Order[];
+
 }
